@@ -5,7 +5,9 @@ import { PokemonCard } from './PokemonCard';
 
 const MultipleCustomHooks = () => {
   const { counter, decrement, increment } = useCounter(1);
-  const { data, isLoading } = useFetch(`https://pokeapi.co/api/v2/pokemon/${counter}`);
+  const { data, isLoading, hasError, error } = useFetch(
+    `https://pokeapi.co/api/v2/pokemon/${counter}`,
+  );
   return (
     <section className='grid gap-4 p-3'>
       <h1>Info Poke</h1>
@@ -14,11 +16,19 @@ const MultipleCustomHooks = () => {
       {isLoading ? (
         <LoadingMessage />
       ) : (
-        <PokemonCard
-          id={data?.id}
-          name={data?.name}
-          sprites={[data?.sprites.front_default, data?.sprites.back_default]}
-        />
+        hasError || (
+          <PokemonCard
+            id={data?.id}
+            name={data?.name}
+            sprites={[data?.sprites.front_default, data?.sprites.back_default]}
+          />
+        )
+      )}
+
+      {hasError && (
+        <p className='text-red-500 font-bold'>
+          {error.status} - {error.message}
+        </p>
       )}
 
       <button
